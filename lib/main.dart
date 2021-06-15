@@ -1,9 +1,13 @@
+import 'package:chat/app/views/chat_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   runApp(MyApp());
-  Firestore.instance.collection("col").document("doc").setData({"texto": "ezequias"});
+  Firestore.instance
+      .collection("col")
+      .document("doc")
+      .setData({"texto": "ezequias"});
 }
 
 class MyApp extends StatelessWidget {
@@ -13,9 +17,9 @@ class MyApp extends StatelessWidget {
       title: 'Chat Flutter',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Container(),
+          primarySwatch: Colors.blue,
+          iconTheme: IconThemeData(color: Colors.blue)),
+      home: ChatScreen(),
     );
   }
 }
