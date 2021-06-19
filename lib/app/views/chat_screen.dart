@@ -4,6 +4,7 @@ import 'package:chat/app/components/chat_message.dart';
 import 'package:chat/app/components/text_composer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -16,13 +17,24 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final GoogleSignIn googlSignIn = GoogleSignIn();
 
+  FirebaseAuth _auth;
   User _correntUser;
 
   @override
   void initState() {
     super.initState();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    this._correntUser = _auth.currentUser;
+    initApp();
+
+    _auth.authStateChanges().listen((user) {
+      setState(() {
+        _correntUser = user;
+      });
+    });
+  }
+
+  void initApp() async {
+    FirebaseApp defaultApp = await Firebase.initializeApp();
+    _auth = FirebaseAuth.instanceFor(app: defaultApp);
   }
 
   Future<User> _getUser() async {
