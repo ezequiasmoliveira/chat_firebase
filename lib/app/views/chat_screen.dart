@@ -82,8 +82,25 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Olá'),
+        title: Text(_correntUser != null
+            ? 'Olá, ${_correntUser.displayName}'
+            : 'Chat App'),
+        centerTitle: true,
         elevation: 0,
+        actions: [
+          _correntUser != null
+              ? IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    _auth.signOut();
+                    googlSignIn.signOut();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Você saiu com sucesso!"),
+                      backgroundColor: Colors.red,
+                    ));
+                  })
+              : Container()
+        ],
       ),
       body: Column(
         children: [
