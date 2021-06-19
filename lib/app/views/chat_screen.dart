@@ -106,8 +106,10 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
               child: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('messages').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('messages')
+                .orderBy('time')
+                .snapshots(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
