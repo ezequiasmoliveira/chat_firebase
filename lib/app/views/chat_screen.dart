@@ -19,6 +19,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   FirebaseAuth _auth;
   User _correntUser;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final User user = await _getUser();
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Não foi possivel fazer o login. Tente novamente!'"),
+        content: Text("Não foi possivel fazer o login. Tente novamente!"),
         backgroundColor: Colors.red,
       ));
     }
@@ -74,16 +75,26 @@ class _ChatScreenState extends State<ChatScreen> {
     Map<String, dynamic> data = {
       "uid": user.uid,
       "senderName": user.displayName,
-      "senderPhotoUrl": user.photoURL
+      "senderPhotoUrl": user.photoURL,
+      "time": Timestamp.now()
     };
 
     if (imageFile != null) {
       UploadTask task = FirebaseStorage.instance
           .ref()
-          .child(DateTime.now().millisecondsSinceEpoch.toString())
+          .child(user.uid + DateTime.now().millisecondsSinceEpoch.toString())
           .putFile(imageFile);
+
+      setState(() {
+        _isLoading = true;
+      });
+
       var url = await task.snapshot.ref.getDownloadURL();
       data['imageUrl'] = url;
+
+      setState(() {
+        _isLoading = true;
+      });
     }
 
     if (text != null) data['text'] = text;
@@ -144,6 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
               }
             },
           )),
+          _isLoading ? LinearProgressIndicator() : Container(),
           TextComposer(_sendMessage),
         ],
       ),
