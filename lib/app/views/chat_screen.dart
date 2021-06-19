@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat/app/components/chat_message.dart';
 import 'package:chat/app/components/text_composer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    this._correntUser = FirebaseAuth.instance.currentUser;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    this._correntUser = _auth.currentUser;
   }
 
   Future<User> _getUser() async {
@@ -103,8 +105,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: docs.length,
                       reverse: true,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(docs[index].get('text')),
+                        return ChatMessage(
+                          data: docs[index].data(),
+                          mine: true,
                         );
                       });
               }
