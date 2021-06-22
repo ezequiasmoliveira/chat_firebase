@@ -17,25 +17,30 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final GoogleSignIn googlSignIn = GoogleSignIn();
 
-  FirebaseAuth _auth;
   User _correntUser;
+  FirebaseAuth _firebaseAuth;
   bool _isLoading = false;
 
   @override
   void initState() {
-    super.initState();
     initApp();
+    super.initState();
+  }
 
-    _auth.authStateChanges().listen((user) {
+  void initApp() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    FirebaseApp defaultApp = await Firebase.initializeApp();
+    _firebaseAuth = FirebaseAuth.instanceFor(app: defaultApp);
+
+    _firebaseAuth.authStateChanges().listen((user) {
       setState(() {
         _correntUser = user;
       });
     });
-  }
 
-  void initApp() async {
-    FirebaseApp defaultApp = await Firebase.initializeApp();
-    _auth = FirebaseAuth.instanceFor(app: defaultApp);
+    if (_correntUser != null) {
+      _correntUser = await _getUser();
+    }
   }
 
   Future<User> _getUser() async {
@@ -90,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
 
       var url = await task.snapshot.ref.getDownloadURL();
-      data['imageUrl'] = url;
+      data['senderPhotoUrl'] = url;
 
       setState(() {
         _isLoading = true;
@@ -115,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ? IconButton(
                   icon: Icon(Icons.exit_to_app),
                   onPressed: () {
-                    _auth.signOut();
+                    _firebaseAuth.signOut();
                     googlSignIn.signOut();
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("Você saiu com sucesso!"),
