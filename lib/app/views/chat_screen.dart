@@ -95,10 +95,10 @@ class _ChatScreenState extends State<ChatScreen> {
       });
 
       var url = await task.snapshot.ref.getDownloadURL();
-      data['senderPhotoUrl'] = url;
+      data['imageUrl'] = url;
 
       setState(() {
-        _isLoading = true;
+        _isLoading = false;
       });
     }
 
